@@ -5,9 +5,15 @@ using UnityEngine.UI;
 
 public class BasePlayerLife : MonoBehaviour 
 {
-    public int life = 3;
+    public int lifeMax = 3;
+    private int life = 3;
     public Text lifeText;
     public GameObject looseText;
+
+    private void Start()
+    {
+        life = lifeMax;
+    }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -15,18 +21,22 @@ public class BasePlayerLife : MonoBehaviour
         {
             life--;
             if (lifeText)
-                lifeText.text = "Life : " + life;
+                lifeText.text = "Lives: " + life;
 
             Destroy(collision.gameObject);
+
+            transform.position = GameObject.FindGameObjectWithTag("PlayerSpawner").transform.position;
+
             if (life <= 0)
             {
-                if (looseText)
-                    looseText.SetActive(true);
+                GameObject.Find("GameManager").GetComponent<BaseGameManager>().Loose();
 
-                GameObject.FindGameObjectWithTag("BaseFormation").GetComponent<BaseFormation>().SetCanMove(false);
-
-                GetComponent<BasePlayerMovement>().SetStuck(true);
             }
         }
+    }
+
+    public void RefillPlayerLife()
+    {
+        life = lifeMax;
     }
 }

@@ -8,6 +8,14 @@ public class BaseEnemy : MonoBehaviour
 
     public int pointsEarn = 100;
 
+    public Sprite type1;
+    public Sprite type2;
+    public Sprite type3;
+    public Sprite type4;
+    public Sprite type5;
+
+    public Sprite explosion;
+
     public float rateChanceFire = 0.33f;
     public float minFireRate = 1.0f;
     public float maxFireRate = 2.0f;
@@ -22,6 +30,30 @@ public class BaseEnemy : MonoBehaviour
     void Start()
     {
         _currentfireRate = Random.Range(minFireRate, maxFireRate);
+    }
+
+    public void SetEnemyType(int thetype)
+    {
+        if(thetype == 1)
+        {
+            GetComponent<SpriteRenderer>().sprite = type1;
+        }
+        else if (thetype == 2)
+        {
+            GetComponent<SpriteRenderer>().sprite = type2;
+        }
+        else if (thetype == 3)
+        {
+            GetComponent<SpriteRenderer>().sprite = type3;
+        }
+        else if (thetype == 4)
+        {
+            GetComponent<SpriteRenderer>().sprite = type4;
+        }
+        else if (thetype == 5)
+        {
+            GetComponent<SpriteRenderer>().sprite = type5;
+        }
     }
 
     void Update()
@@ -62,7 +94,8 @@ public class BaseEnemy : MonoBehaviour
 
                 GameObject.FindGameObjectWithTag("Player").GetComponent<BasePlayerScore>().AddScore(pointsEarn);
 
-                Destroy(gameObject);
+                GetComponent<SpriteRenderer>().sprite = explosion;
+                StartCoroutine("Die");
             }
         }
     }
@@ -72,5 +105,11 @@ public class BaseEnemy : MonoBehaviour
         GameObject aBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
         aBullet.GetComponent<BaseBullet>().SetDirection(-Vector3.up);
         aBullet.GetComponent<BaseBullet>().SetOwner(gameObject);
+    }
+
+    IEnumerator Die()
+    {
+        yield return new WaitForSeconds(0.3f);
+        Destroy(gameObject);
     }
 }

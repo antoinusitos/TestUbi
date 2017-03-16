@@ -14,9 +14,10 @@ public class BasePlayerMovement : MonoBehaviour
     public KeyCode shootKey = KeyCode.Space;
     public float reloadSpeed = 1.0f;
     public GameObject bullet;
+    public GameObject fireStart;
 
     private float _currentReload = 0.0f;
-    private bool _canShoot = true;
+    private bool _canShoot = false;
     private bool _canMove = false;
 
 	// Update is called once per frame
@@ -57,7 +58,7 @@ public class BasePlayerMovement : MonoBehaviour
             if (bullet)
             {
                 _canShoot = false;
-                GameObject aBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
+                GameObject aBullet = Instantiate(bullet, fireStart.transform.position, Quaternion.identity) as GameObject;
                 aBullet.GetComponent<BaseBullet>().SetDirection(Vector3.up);
                 aBullet.GetComponent<BaseBullet>().SetOwner(gameObject);
             }
@@ -71,5 +72,10 @@ public class BasePlayerMovement : MonoBehaviour
     public void SetStuck(bool newState)
     {
         _canMove = !newState;
+    }
+
+    public void SetcanShoot(bool newState)
+    {
+        _canShoot = newState;
     }
 }

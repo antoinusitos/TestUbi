@@ -7,6 +7,7 @@ public class BaseFormation : MonoBehaviour
     public int nbRow = 5;
     public int nbColomn = 11;
     public float spacing = 1.5f;
+    public float verticalSpacing = 1.0f;
 
     // untick if formation was hand made
     public bool generateBaseFormation = false;
@@ -27,7 +28,7 @@ public class BaseFormation : MonoBehaviour
     void Start()
     {
         transform.position = GameObject.FindGameObjectWithTag("BaseFormationSpawner").transform.position;
-        Debug.Log(transform.position);
+
         if(generateBaseFormation)
         {
 
@@ -36,12 +37,11 @@ public class BaseFormation : MonoBehaviour
             {
                 for(int colomn = 0; colomn < nbColomn; colomn++)
                 {
-                    GameObject anEnemy = (GameObject)Instantiate(enemyPrefab, transform.position + new Vector3(transform.position.y + colomn * spacing, transform.position.x + row * spacing, 0), Quaternion.identity);
+                    GameObject anEnemy = (GameObject)Instantiate(enemyPrefab);
                     anEnemy.transform.parent = transform;
+                    anEnemy.transform.localPosition = new Vector3(colomn * spacing, row * verticalSpacing, 0);
                 }
             }
-
-
 
             _allChildren = new List<GameObject>();
             for(int i = 0; i < transform.childCount; i++)
@@ -50,14 +50,13 @@ public class BaseFormation : MonoBehaviour
 
                 _allChildren.Add(transform.GetChild(i).gameObject);
                 _allChildren[i].GetComponent<BaseEnemy>().SetParentBase(this);
-                if(row == 0)
+                _allChildren[i].GetComponent<BaseEnemy>().SetEnemyType(row + 1);
+                if (row == 0)
                 {
                     _allChildren[i].GetComponent<BaseEnemy>().SetCanFire(true);
                 }
             }
         }
-        transform.position = GameObject.FindGameObjectWithTag("BaseFormationSpawner").transform.position;
-        Debug.Log(transform.position);
     }
 
     public void SetCanMove(bool newState)
@@ -67,7 +66,8 @@ public class BaseFormation : MonoBehaviour
         {
             for (int i = 0; i < _allChildren.Count; i++)
             {
-                _allChildren[i].GetComponent<BaseEnemy>().SetCanFire(false);
+                if(_allChildren[i] != null)
+                    _allChildren[i].GetComponent<BaseEnemy>().SetCanFire(false);
             }
         }
     }
@@ -143,6 +143,11 @@ public class BaseFormation : MonoBehaviour
                     _allChildren[newIndex].GetComponent<BaseEnemy>().SetCanFire(true);
                 }
             }
+        }
+
+        if(_allChildren.Count <= 0)
+        {
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<BaseGameManager>().Win();
         }
     }
 }

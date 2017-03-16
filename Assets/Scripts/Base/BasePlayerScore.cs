@@ -15,5 +15,12 @@ public class BasePlayerScore : MonoBehaviour
         if (scoreText)
             scoreText.text = "score : " + _score;
     }
+
+    public void ResetScore()
+    {
+        _score = 0;
+        if (scoreText)
+            scoreText.text = "score : " + _score;
+    }
 	
 }
