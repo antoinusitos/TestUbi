@@ -58,7 +58,8 @@ public class BasePlayerMovement : MonoBehaviour
             if (bullet)
             {
                 _canShoot = false;
-                GameObject aBullet = Instantiate(bullet, fireStart.transform.position, Quaternion.identity) as GameObject;
+                BaseAudioManager.GetInstance().PlaySound(BaseAudioManager.audioToPlay.fire);
+                GameObject aBullet = Instantiate(bullet, fireStart.transform.position, Quaternion.identity);
                 aBullet.GetComponent<BaseBullet>().SetDirection(Vector3.up);
                 aBullet.GetComponent<BaseBullet>().SetOwner(gameObject);
             }

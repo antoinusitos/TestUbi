@@ -90,9 +90,12 @@ public class BaseEnemy : MonoBehaviour
             Destroy(collision.gameObject);
             if (life <= 0)
             {
-                parentBase.UpdateList(gameObject);
+                if(parentBase)
+                    parentBase.UpdateList(gameObject);
 
                 GameObject.FindGameObjectWithTag("Player").GetComponent<BasePlayerScore>().AddScore(pointsEarn);
+
+                BaseAudioManager.GetInstance().PlaySound(BaseAudioManager.audioToPlay.die);
 
                 GetComponent<SpriteRenderer>().sprite = explosion;
                 StartCoroutine("Die");
@@ -102,9 +105,9 @@ public class BaseEnemy : MonoBehaviour
 
     void Fire()
     {
-        GameObject aBullet = Instantiate(bullet, transform.position, Quaternion.identity) as GameObject;
-        aBullet.GetComponent<BaseBullet>().SetDirection(-Vector3.up);
-        aBullet.GetComponent<BaseBullet>().SetOwner(gameObject);
+        GameObject aBullet = Instantiate(bullet, transform.position, Quaternion.identity);
+        aBullet.GetComponent<BaseEnemyBullet>().SetDirection(-Vector3.up);
+        aBullet.GetComponent<BaseEnemyBullet>().SetOwner(gameObject);
     }
 
     IEnumerator Die()

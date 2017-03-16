@@ -37,7 +37,7 @@ public class BaseFormation : MonoBehaviour
             {
                 for(int colomn = 0; colomn < nbColomn; colomn++)
                 {
-                    GameObject anEnemy = (GameObject)Instantiate(enemyPrefab);
+                    GameObject anEnemy = Instantiate(enemyPrefab);
                     anEnemy.transform.parent = transform;
                     anEnemy.transform.localPosition = new Vector3(colomn * spacing, row * verticalSpacing, 0);
                 }
@@ -137,6 +137,7 @@ public class BaseFormation : MonoBehaviour
         {
             if (deletedGameObject == _allChildren[i])
             {
+                _allChildren[i] = null;
                 int newIndex = i + nbColomn;
                 if (newIndex >= 0 && newIndex < _allChildren.Count && _allChildren[newIndex] != null)
                 {
@@ -145,9 +146,14 @@ public class BaseFormation : MonoBehaviour
             }
         }
 
-        if(_allChildren.Count <= 0)
+        bool finished = true;
+        for (int i = 0; i < _allChildren.Count; i++)
         {
-            GameObject.FindGameObjectWithTag("GameManager").GetComponent<BaseGameManager>().Win();
+            if (_allChildren[i] != null)
+                finished = false;
         }
+
+        if(finished)
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<BaseGameManager>().Win();
     }
 }

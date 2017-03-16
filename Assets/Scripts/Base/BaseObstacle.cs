@@ -8,7 +8,7 @@ public class BaseObstacle : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.transform.GetComponent<BaseBullet>())
+        if (collision.transform.GetComponent<BaseBullet>() || collision.transform.GetComponent<BaseEnemyBullet>())
         {
             life--;
             Destroy(collision.gameObject);

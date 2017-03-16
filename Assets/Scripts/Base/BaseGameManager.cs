@@ -7,15 +7,20 @@ public class BaseGameManager : MonoBehaviour
 {
     public GameObject player;
     public GameObject specialEnemiesspawner;
-    public GameObject textLoose;
+    public GameObject textLose;
     public GameObject textWin;
     public GameObject FormationPrefab;
     public GameObject playerSpawner;
     public GameObject startText;
     public GameObject obstacle;
 
+    public GameObject scoreText;
+    public GameObject livesText;
+
     private GameObject _instancedObstable;
     private GameObject _instancedFormation;
+
+    private BaseAudioManager _audioManager;
 
     enum gameState
     {
@@ -29,19 +34,31 @@ public class BaseGameManager : MonoBehaviour
     {
         startText.SetActive(true);
         player.GetComponent<BasePlayerMovement>().SetStuck(true);
+
+        _audioManager = BaseAudioManager.GetInstance();
     }
 
-    public void Loose()
+    public void Lose()
     {
         _currentGameState = gameState.menu;
-        if (textLoose)
-            textLoose.SetActive(true);
+        if (textLose)
+            textLose.SetActive(true);
+
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("BulletBase");
+        for(int i = 0; i < bullets.Length; i++)
+        {
+            Destroy(bullets[i]);
+        }
+
+        _audioManager.StopBackground();
+        _audioManager.PlaySound(BaseAudioManager.audioToPlay.lose);
 
         GameObject.FindGameObjectWithTag("BaseFormation").GetComponent<BaseFormation>().SetCanMove(false);
 
         player.GetComponent<BasePlayerMovement>().SetStuck(true);
         player.GetComponent<BasePlayerMovement>().SetcanShoot(false);
         specialEnemiesspawner.GetComponent<BaseSpecialEnemySpawner>().SetCanSpawn(false);
+        specialEnemiesspawner.GetComponent<BaseSpecialEnemySpawner>().StopLastSpawned();
     }
 
     public void Win()
@@ -49,6 +66,15 @@ public class BaseGameManager : MonoBehaviour
         _currentGameState = gameState.menu;
         if (textWin)
             textWin.SetActive(true);
+
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("BulletBase");
+        for (int i = 0; i < bullets.Length; i++)
+        {
+            Destroy(bullets[i]);
+        }
+
+        _audioManager.StopBackground();
+        _audioManager.PlaySound(BaseAudioManager.audioToPlay.win);
 
         GameObject.FindGameObjectWithTag("BaseFormation").GetComponent<BaseFormation>().SetCanMove(false);
 
@@ -61,10 +87,16 @@ public class BaseGameManager : MonoBehaviour
     {
         _currentGameState = gameState.inGame;
 
-        startText.SetActive(false);
-        textLoose.SetActive(false);
-        textWin.SetActive(false);
+        _audioManager.PlaySound(BaseAudioManager.audioToPlay.start);
+        StartCoroutine(waitDelay(2));
 
+        startText.SetActive(false);
+        textLose.SetActive(false);
+        textWin.SetActive(false);
+        scoreText.SetActive(true);
+        livesText.SetActive(true);
+
+        specialEnemiesspawner.GetComponent<BaseSpecialEnemySpawner>().DestroyLastSpawned();
         specialEnemiesspawner.GetComponent<BaseSpecialEnemySpawner>().SetCanSpawn(true);
 
         if (_instancedFormation)
@@ -78,6 +110,9 @@ public class BaseGameManager : MonoBehaviour
         player.transform.position = playerSpawner.transform.position;
         player.GetComponent<BasePlayerMovement>().SetStuck(false);
         player.GetComponent<BasePlayerScore>().ResetScore();
+        player.GetComponent<BasePlayerLife>().RefillPlayerLife();
+
+
     }
 
     void Update()
@@ -86,5 +121,17 @@ public class BaseGameManager : MonoBehaviour
         {
             StartGame();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+
+    IEnumerator waitDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        _audioManager.PlayBackground();
     }
 }
