@@ -13,6 +13,13 @@ public class BaseEnemyBullet : MonoBehaviour
     private float _currentTimeToFlip = 0.0f;
     public float timeToFlip = 0.5f;
 
+    private SpriteRenderer _spriteRenderer;
+
+    private void Start()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
     public void SetDirection(Vector3 dir)
     {
         _direction = dir;
@@ -34,7 +41,7 @@ public class BaseEnemyBullet : MonoBehaviour
         if(_currentTimeToFlip >= timeToFlip)
         {
             _currentTimeToFlip = 0.0f;
-            GetComponent<SpriteRenderer>().flipX = _flip;
+            _spriteRenderer.flipX = _flip;
             _flip = !_flip;
         }
 

@@ -9,7 +9,7 @@ public class BaseLimitToLose : MonoBehaviour
     {
         if (collision.transform.tag == "EnemyBase")
         {
-            GameObject.Find("GameManager").GetComponent<BaseGameManager>().Lose();
+            BaseGameManager.GetInstance().Lose();
         }
     }
 }

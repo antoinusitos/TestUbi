@@ -21,6 +21,7 @@ public class BaseGameManager : MonoBehaviour
     private GameObject _instancedFormation;
 
     private BaseAudioManager _audioManager;
+    private BaseFormation _formation;
 
     enum gameState
     {
@@ -29,6 +30,19 @@ public class BaseGameManager : MonoBehaviour
     };
 
     private gameState _currentGameState = gameState.menu;
+
+
+    private static BaseGameManager _instance;
+
+    public static BaseGameManager GetInstance()
+    {
+        return _instance;
+    }
+
+    private void Awake()
+    {
+        _instance = this;
+    }
 
     void Start()
     {
@@ -53,7 +67,7 @@ public class BaseGameManager : MonoBehaviour
         _audioManager.StopBackground();
         _audioManager.PlaySound(BaseAudioManager.audioToPlay.lose);
 
-        GameObject.FindGameObjectWithTag("BaseFormation").GetComponent<BaseFormation>().SetCanMove(false);
+        _instancedFormation.GetComponent<BaseFormation>().SetCanMove(false);
 
         player.GetComponent<BasePlayerMovement>().SetStuck(true);
         player.GetComponent<BasePlayerMovement>().SetcanShoot(false);
@@ -76,7 +90,7 @@ public class BaseGameManager : MonoBehaviour
         _audioManager.StopBackground();
         _audioManager.PlaySound(BaseAudioManager.audioToPlay.win);
 
-        GameObject.FindGameObjectWithTag("BaseFormation").GetComponent<BaseFormation>().SetCanMove(false);
+        _instancedFormation.GetComponent<BaseFormation>().SetCanMove(false);
 
         player.GetComponent<BasePlayerMovement>().SetStuck(true);
         player.GetComponent<BasePlayerMovement>().SetcanShoot(false);

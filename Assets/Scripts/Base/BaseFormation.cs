@@ -19,7 +19,7 @@ public class BaseFormation : MonoBehaviour
     public float movementSize = 1.0f;
     private float _currentMovementReload = 0.0f;
 
-    public List<GameObject> _allChildren;
+    private List<GameObject> _allChildren;
 
     private bool _goingRight = true;
     private bool _mustGoingDown = false;
@@ -128,6 +128,11 @@ public class BaseFormation : MonoBehaviour
                     _mustGoingDown = true;
                 }
             }
+            for (int i = 0; i < _allChildren.Count; i++)
+            {
+                if (_allChildren[i] != null)
+                    _allChildren[i].GetComponent<BaseEnemy>().ChangeFrame();
+            }
         }
     }
 
@@ -154,6 +159,6 @@ public class BaseFormation : MonoBehaviour
         }
 
         if(finished)
-            GameObject.FindGameObjectWithTag("GameManager").GetComponent<BaseGameManager>().Win();
+            BaseGameManager.GetInstance().Win();
     }
 }
